@@ -5,7 +5,8 @@ import java.util.Scanner;
 public class HorseRacing {
 
      public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);    
+        Scanner in = new Scanner(System.in);
+        int currentMenu = 0;    
         HorseRacingHelper.prepareHorseRacingSimulation();
         boolean gameOver = false;
         while(!gameOver){
@@ -15,14 +16,54 @@ public class HorseRacing {
 
             Race race = HorseRacingHelper.createRace(numHorsesInRace, HorseRacingHelper.SHORT, HorseRacingHelper.DIRT);
             race.displayRaceInfo();
+            
+            while (currentMenu == 0) {
+                int mainMenuVar = race.mainMenu(in);
+                if (mainMenuVar == 1) {
+                    currentMenu = 1;
+                } else if (mainMenuVar == 2) {
+                    currentMenu = 2;
+                } else {
+                    currentMenu = 0;
+                }
+            }
 
-            race.startRace();
+            while (currentMenu == 1) {
+                int bankMenuVar = race.bankMenu(in);
+                if (bankMenuVar == 1) {
+                    currentMenu = 11;
+                } else if (bankMenuVar == 2) {
+                    currentMenu = 0;
+                } else {
+                    currentMenu = 1;
+                }
+            }
 
-            System.out.println("Race is Over");
-            gameOver = playAgain(in);
+            while (currentMenu == 2) {
+                
+            }
+
+            while (currentMenu == 11) {
+                int loanMenuVar = race.loanMenu(in);
+                    if (loanMenuVar == 1) {
+                        currentMenu = 1;
+                    } else if (loanMenuVar == 2) {
+                        currentMenu = 0; // MAKE ERROR
+                    } else {
+                        currentMenu = 0;
+                    }
+            }
+
+
+            //race.displayRaceInfo();
+            //race.startRace();
+            
+
+            //System.out.println("Race is Over");
+            //gameOver = playAgain(in);
+
+
         }
-
-        
     }
 
     private static boolean playAgain(Scanner in) {
@@ -35,6 +76,5 @@ public class HorseRacing {
             return true;
 
         return false;
-
     }
 }
