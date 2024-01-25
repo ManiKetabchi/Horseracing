@@ -115,28 +115,39 @@ public class Race {
     
     
     public void displayHorseTable(){
+
+        System.out.printf("|%-23s|%10s|%10s|%10s|%15s|\n", "Horse", "Dirt Stats", "Grass Stats", "Mud Stats", "Preferred Len");
+
         for (int i = 0; i < horses.size(); i++) {   // iterates through the horses list
             Horse horse = horses.get(i);
             String s1 = "" + horse.getName();
             String s2 = "" + horse.getDirtRating();
             String s3 = "" + horse.getGrassRating();
             String s4 = "" + horse.getMudRating();
+            String s5 = "" + horse.getPreferredLength();
+            String iNum = "" + (i+1);
 
-            System.out.println("+--------------------+-----+-----+-----+");
-            System.out.printf("|%-20s|%5s|%5s|%5s|\n", s1, s2, s3, s4);
+            System.out.println("+-------------------------------------------------------------------------+");
+            System.out.printf("|%2s|%-20s|%10s|%11s|%10s|%15s|\n",iNum, s1, s2, s3, s4, s5);
         }
-        System.out.println("+--------------------+-----+-----+-----+");
+        System.out.println("+-------------------------------------------------------------------------+");
+    }
+
+    public int bettingSystem() {
+        System.out.print("Enter the number of the horse you would like to bet on: ");
+        String result = input.nextLine();
+        int betInt = Integer.parseInt(result);
+        return betInt;
     }
 
     public void displayRaceInfo() {
-        System.out.println("Race Information:");
+        displayHorseTable();
+
+        System.out.println();
         System.out.println("Race Surface: " + raceSurface);
         System.out.println("Race Length: " + raceLength + " furlongs");
-        System.out.println("List of Horses:");
-        // for (Horse horse : horses) {
-        //     System.out.println("- " + horse.getName());
-        // }
-        displayHorseTable();
+
+        System.out.println(bettingSystem() + " is the number of the horse you would like to bet on");
     }
 
     public void displayResults(){

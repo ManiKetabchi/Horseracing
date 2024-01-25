@@ -6,7 +6,7 @@ public class HorseRacing {
 
      public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        int currentMenu = 0;    
+        int currentMenu = 50;    
         HorseRacingHelper.prepareHorseRacingSimulation();
         boolean gameOver = false;
         while(!gameOver){
@@ -15,7 +15,6 @@ public class HorseRacing {
             int numHorsesInRace = (int)(Math.random()*7)+5;
 
             Race race = HorseRacingHelper.createRace(numHorsesInRace, HorseRacingHelper.SHORT, HorseRacingHelper.DIRT);
-            race.displayRaceInfo();
             
             while (currentMenu == 0) {
                 int mainMenuVar = race.mainMenu(in);
@@ -54,9 +53,11 @@ public class HorseRacing {
                     }
             }
 
-
-            //race.displayRaceInfo();
-            //race.startRace();
+            while (currentMenu == 50) {
+                race.displayRaceInfo();
+                race.startRace();
+                playAgain(in);
+            }
             
 
             //System.out.println("Race is Over");
