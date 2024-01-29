@@ -170,6 +170,7 @@ public class Race {
             String s6 = "" + racingProbabilitiesWin(horse);
             String s7 = "" + racingProbabilitiesPlace(horse);
             String s8 = "" + racingProbabilitiesShow(horse);
+            
 
             
 
@@ -190,6 +191,7 @@ public class Race {
 
         System.out.print("Enter the amount you would like to bet for: ");
         String betAmount = input.nextLine();
+        
         System.out.println();
 
         System.out.println("1. Win");
@@ -198,6 +200,7 @@ public class Race {
         
         System.out.print("Enter the placing you would like to bet on: ");
         String betPlacing = input.nextLine();
+
         System.out.println();
 
         betInt = Integer.parseInt(horseNum);
@@ -216,8 +219,8 @@ public class Race {
     public void checkWin() {
         System.out.println((1) + ": " + results.get(0).getName() + "("+results.get(0).getNumber()+")");
         if (betInt == (results.get(0).getNumber()) && betPlacingInt == 1) {
-            bankBalance += betAmountInt;
-            realBalance += betAmountInt;
+            bankBalance += Math.round(betAmountInt*winVariable(results.get(0)));
+
             System.out.println("YOU WIN");
             System.out.println("You now have $" + bankBalance);
         }
@@ -292,14 +295,9 @@ public class Race {
         }
     }
 
-    public double numeratorProbability(Horse horse) {
-        double probability;
+    // Probabilities for horse racing
 
-        probability = horse.getPreferredLength() + horse.getGrassRating();
-        return probability;
-    }   
-
-    public String racingProbabilitiesWin(Horse horse) {
+    public String racingProbabilitiesWin(Horse horse) { // win probability (VISUAL)
         double prob1 = 0;
         double prob2 = 0;
         int denom = 1;
@@ -327,42 +325,10 @@ public class Race {
     
     }
 
-    public String racingProbabilitiesPlace(Horse horse) {
+    public double winVariable(Horse horse) { // win probability (VISUAL)
         double prob1 = 0;
         double prob2 = 0;
-        int denom = 1;
-        
-        prob1 = horse.getPreferredLength() + horse.getGrassRating();
-
-        for (int i = 0; i < horses.size(); i++) { 
-            prob2 += horses.get(i).getPreferredLength() + horses.get(i).getGrassRating();
-        }
-
-        double probable = prob2/prob1;
-        
-        
-
-        double prob = probable%1;
-
-       
-
-        if (probable%denom%2 == 0) {
-            denom = 1;
-            probable = probable / 2;
-        }
-
-        
-        int probable2 = (int) Math.round(probable);
-
-
-        return probable2 + " - " + denom;
-    
-    }
-
-    public String racingProbabilitiesShow(Horse horse) {
-        double prob1 = 0;
-        double prob2 = 0;
-        int denom = 1;
+        double denom = 1;
         
         prob1 = horse.getPreferredLength() + horse.getGrassRating();
 
@@ -379,10 +345,83 @@ public class Race {
             probable = probable * 2;
         }  
 
-        int probable2 = (int) Math.round(probable);
+        
+        double probable2 = (int) Math.round(probable);
 
-        return probable2 + " - " + denom*4;
+
+        return (probable2 / denom);
     
     }
+
     
+
+
+
+    public String racingProbabilitiesPlace(Horse horse) { // top 2 probability (VISUAL)
+        double prob1 = 0;
+        double prob2 = 0;
+        int denom = 1;
+        
+        prob1 = (horse.getPreferredLength() + horse.getGrassRating()) ;
+
+        for (int i = 0; i < horses.size(); i++) { 
+            prob2 += (horses.get(i).getPreferredLength() + horses.get(i).getGrassRating());
+        }
+
+        double probable = prob2/prob1;
+        
+        double prob = probable%1;
+
+        if (prob > 0.4 && prob < 0.6) {
+            denom = 2;
+            probable = probable * 2;
+        }
+
+        int probable2 = (int) Math.round(probable * 0.8);
+
+        if (probable2%denom == 0) {
+            probable2 -= 1;
+        }
+
+        if (probable2 <= denom) {
+            denom += 1;
+            probable = probable + 3;
+        }
+
+        return (int) probable2 + " - " + denom;
+    }
+
+    public String racingProbabilitiesShow(Horse horse) { // top 3 probability (VISUAL)
+        double prob1 = 0;
+        double prob2 = 0;
+        int denom = 1;
+        
+        prob1 = (horse.getPreferredLength() + horse.getGrassRating()) ;
+
+        for (int i = 0; i < horses.size(); i++) { 
+            prob2 += (horses.get(i).getPreferredLength() + horses.get(i).getGrassRating());
+        }
+
+        double probable = prob2/prob1;
+        
+        double prob = probable%1;
+
+        if (prob > 0.4 && prob < 0.6) {
+            denom = 2;
+            probable = probable * 2;
+        }
+
+        int probable2 = (int) Math.round(probable * .6);
+
+        if (probable2%denom == 0) {
+            probable2 -= 1;
+        }
+
+        if (probable2 == denom) {
+            denom += 2;
+            probable = probable + 3;
+        }
+
+        return (int) probable2 + " - " + denom;
+    }
 }

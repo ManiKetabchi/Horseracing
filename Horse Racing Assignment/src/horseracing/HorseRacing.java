@@ -12,7 +12,7 @@ public class HorseRacing {
         while(!gameOver){
             HorseRacingHelper.clearConsole();
 
-            int numHorsesInRace = (int) (Math.random() * 5) + 2;
+            int numHorsesInRace = 3;//(int) (Math.random() * 5) + 5;
 
             Race race = HorseRacingHelper.createRace(numHorsesInRace, (int) (Math.random() * 3) + 1, (int) (Math.random() * 3) + 1);
             
