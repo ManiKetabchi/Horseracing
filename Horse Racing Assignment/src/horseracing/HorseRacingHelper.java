@@ -91,22 +91,22 @@ public class HorseRacingHelper {
 
     public static Race createRace(int numHorses, int raceType, int raceTerrain){
         double[] raceLengths;
-        if (raceType == SHORT)
+        if (raceType == 1)
             raceLengths = SHORT_RACES;
-        else if (raceType == MIDDLE)
+        else if (raceType == 2)
             raceLengths = MIDDLE_RACES;
         else
             raceLengths = LONG_RACES;
 
         String terrain = "";
-        if (raceTerrain == GRASS)
+        if (raceTerrain == 1)
             terrain = "Grass";
-        else if (raceTerrain == DIRT)
+        else if (raceTerrain == 2)
             terrain = "Dirt";
-        else
+        else if (raceTerrain == 3)
             terrain = "Mud";
 
-        double raceLength = raceLengths[(int)(Math.random()*raceLengths.length)];
+        double raceLength = raceLengths[(int)(Math.random()*raceLengths.length)]; // IMPORTANT
             
 
         List<Horse> horses = getNDifferentHorses(numHorses);
