@@ -26,8 +26,6 @@ public class HorseRacing {
                 } else if (mainMenuVar == 2) {
                     currentMenu = 2;
                 } else if (mainMenuVar == 3) {
-                    currentMenu = 3;
-                } else if (mainMenuVar == 4) {
                     currentMenu = 9999;
                 } else {
                     currentMenu = 0;
@@ -58,8 +56,8 @@ public class HorseRacing {
 
             // Racing Tree
 
-            while (currentMenu == 2) {
-
+            while (currentMenu == 2) { // Racing
+                HorseRacingHelper.clearConsole();
                 race.displayRaceInfo();
                 race.bettingSystem();
                 race.startRace();
@@ -67,19 +65,9 @@ public class HorseRacing {
                 currentMenu = 0;
             }
 
+            // Exit
 
-            while (currentMenu == 11) {
-                int loanMenuVar = race.loanMenu(in);
-                    if (loanMenuVar == 1) {
-                        currentMenu = 1;
-                    } else if (loanMenuVar == 2) {
-                        currentMenu = 0; // MAKE ERROR
-                    } else {
-                        currentMenu = 0;
-                    }
-            }
-
-            while (currentMenu == 9999) {
+            while (currentMenu == 9999) { // Exit
                 System.out.println("Thanks for playing");
                 System.out.println();
                 System.out.println("You won " + race.racesWon + " races!");
@@ -94,17 +82,5 @@ public class HorseRacing {
 
 
         }
-    }
-
-    private static boolean playAgain(Scanner in) {
-        System.out.print("\u001B[?25l");  // Hide the cursor
-
-        System.out.print("Play Again: (y/n): ");
-        String result = in.nextLine();
-
-        if (result.equals("n"))
-            return true;
-
-        return false;
     }
 }

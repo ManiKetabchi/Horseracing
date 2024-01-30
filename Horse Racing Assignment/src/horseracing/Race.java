@@ -5,24 +5,23 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Race {
-    private List<Horse> horses;
+    private List<Horse> horses; 
     private double raceLength; // in furlongs
     private String raceSurface; // "grass", "dirt", or "mud" (Uses HorseRacingHelper constants)
     private int currentHorse;
-    
 
-    public static int accountsPayable = 0;
-    public static int bankBalance = 1000;
-    public static int realBalance = 1000;
-    public static int racesWon = 0;
-    public static int racesLost = 0;
-    public static int betInt;
-    public static int betAmountInt;
-    public static int betPlacingInt;
-    Scanner input = new Scanner(System.in);
+    public static int accountsPayable = 0; // loan amount
+    public static int bankBalance = 1000; // initial amount of money (can be changed with loans)
+    public static int realBalance = 1000; // initial amount of money (can't be changed with loans)
+    public static int racesWon = 0; // races won stat
+    public static int betInt; // holder var
+    public static int betAmountInt; // holder var
+    public static int betPlacingInt; // holder var
+    Scanner input = new Scanner(System.in); // scanner
 
     private List<Horse> results;
 
+    // DESLAURIERS CODE UNTIL LINE 63
 
     public Race(List<Horse> horses, double raceLength, String raceSurface) {
         this.horses = horses;
@@ -31,7 +30,6 @@ public class Race {
         this.currentHorse = 0;
         this.results = new ArrayList<Horse>();
     }
-
 
     public List<Horse> getHorses() {
         return horses;
@@ -60,46 +58,50 @@ public class Race {
         return raceSurface;
     }
 
-    public static int mainMenu(Scanner input) { 
+
+    // GROUP CODE STARTS HERE
+
+
+    public static int mainMenu(Scanner input) { // Main menu for the game
         HorseRacingHelper.clearConsole();
-        System.out.println("Kentucky Derby");
+        System.out.println("ICS3U Derby"); // title
         System.out.println();
-        System.out.println("1. Bank");
-        System.out.println("2. Race");
-        System.out.println("3. Stats");
-        System.out.println("4. Settings");
+        System.out.println("1. Bank"); // menu option
+        System.out.println("2. Race"); // menu option
+        System.out.println("3. Quit"); // menu option
+        System.out.print("Enter your choice: ");
     
-        int response = 0; // response int 1-4
+        int response = 0; // response int 1-3
         int holderInt = 0; // when holderInt is 1 the valid output is returned
     
-        while (holderInt == 0) { 
+        while (holderInt == 0) { // loop until holderInt is 1
 
             if (input.hasNextInt()) { // check if response is an int
 
                 response = input.nextInt();
-                if (response >= 1 && response <= 4) { // check if response is 1-4
+                if (response >= 1 && response <= 3) { // check if response is 1-3
                     holderInt = 1; // set holderInt to 1 to break the while loop
                 } else {
-                    System.out.println("Please enter a number between 1 and 4."); // error msg
+                    System.out.println("Please enter a number between 1 and 3."); // error msg
                 }
             } else {
-                System.out.println("Please enter a number between 1 and 4."); // error msg
+                System.out.println("Please enter a number between 1 and 3."); // error msg
                 input.next(); // ignore input
             }
         }
 
-        return response; 
+        return response;  // return statement once holderInt is 1 with a valid input
     }
 
     public static int bankMenu(Scanner input) { // Menu for banking system
         HorseRacingHelper.clearConsole();
-        System.out.println("Bank Menu");
+        System.out.println("Bank Menu"); // title
         System.out.println();
-        System.out.println("Bank Balance: $" + bankBalance);
-        System.out.println("Accounts Payable: $" + accountsPayable);
+        System.out.println("Bank Balance: $" + bankBalance); // bank balance
+        System.out.println("Accounts Payable: $" + accountsPayable); // amount you owe/loaned for
         System.out.println();
-        System.out.println("1. Loan");
-        System.out.println("2. Back");
+        System.out.println("1. Loan"); // move to loanmenu
+        System.out.println("2. Back"); // back to mainmenu
 
         int response = 0; // response int 1 or 2
         int holderInt = 0; // when holderInt is 1 the valid output is returned
@@ -153,10 +155,8 @@ public class Race {
         
         return response;
     }
-
     
-    
-    public void displayHorseTable(){
+    public void displayHorseTable(){ // Displays the horse table
 
         System.out.printf("|%-23s|%10s|%11s|%10s|%15s|%10s|%15s|%15s|\n", "Horse", "Dirt Stats", "Grass Stats", "Mud Stats", "Preferred Length", "Win Reward", "Place Reward", "Show Reward");
 
@@ -183,35 +183,82 @@ public class Race {
         System.out.println("+--------------------------------------------------------------------------------------------------------------------+");
     }
 
-    public void bettingSystem() { // Betting system for the game
+    public void bettingSystem() { // Betting system for the game 
+        int holderInt1 = 0;
+        int holderInt2 = 0;
+        int holderInt3 = 0;
+
         System.out.print("Enter the number of the horse you would like to bet on: ");
-        String horseNum = input.nextLine();
+
+
+        while (holderInt1 == 0) { 
+
+            if (input.hasNextInt()) { // check if response is an int
+
+                betInt = input.nextInt();
+                if (betInt >= 1 && betInt <= numHorses()) { // check if response is in range of horses
+                    holderInt1 = 1; // set holderInt1 to 1 to break the while loop
+                } else {
+                    System.out.println("Please enter a number between 1 and " + numHorses()); // error msg
+                }
+            } else {
+                System.out.println("Please enter a number between 1 and " + numHorses()); // error msg
+                input.next(); // ignore input
+            }
+        }
+
         System.out.println();
 
 
-        System.out.println("$" + bankBalance + " is your current bank balance");
+        System.out.println("$" + bankBalance + " is your current bank balance"); // prompt user
         System.out.println("You owe $" + accountsPayable + " to the bank");
 
-        System.out.print("Enter the amount you would like to bet for: ");
-        String betAmount = input.nextLine();
+        System.out.print("Enter the amount you would like to bet for (minumum 50): ");
         
+        while (holderInt2 == 0) { 
+
+            if (input.hasNextInt()) { // check if response is an int
+
+                betAmountInt = input.nextInt();
+                if (betAmountInt >= 50 && betAmountInt <= bankBalance) { // check if response is in range
+                    holderInt2 = 1; // set holderInt2 to 1 to break the while loop
+                } else {
+                    System.out.println("Please enter a number between 50 and " + bankBalance); // error msg
+                }
+            } else {
+                System.out.println("Please enter a number between 50 and " + bankBalance); // error msg
+                input.next(); // ignore input
+            }
+        }
+
         System.out.println();
 
-        System.out.println("1. Win");
-        System.out.println("2. Place");
-        System.out.println("3. Show");
+        System.out.println("1. Win"); // option
+        System.out.println("2. Place"); // option
+        System.out.println("3. Show"); // option
         
-        System.out.print("Enter the placing you would like to bet on: ");
-        String betPlacing = input.nextLine();
+        System.out.print("Enter the placing you would like to bet on: "); // ask user for input
+
+        while (holderInt3 == 0) { 
+
+            if (input.hasNextInt()) { // check if response is an int
+
+                betPlacingInt = input.nextInt();
+                if (betPlacingInt >= 1 && betPlacingInt <= 3) { // check if response is 1, 2 or 3
+                    holderInt3 = 1; // set holderInt3 to 1 to break the while loop
+                } else {
+                    System.out.println("Please enter a number between 1 and 3"); // error msg
+                }
+            } else {
+                System.out.println("Please enter a number between 1 and 3"); // error msg
+                input.next(); // ignore input
+            }
+        }
 
         System.out.println();
-
-        betInt = Integer.parseInt(horseNum);
-        betAmountInt = Integer.parseInt(betAmount);
-        betPlacingInt = Integer.parseInt(betPlacing);
     }
 
-    public void displayRaceInfo() {
+    public void displayRaceInfo() { // displays race information
         displayHorseTable();
 
         System.out.println();
@@ -219,10 +266,11 @@ public class Race {
         System.out.println("Race Length: " + raceLength + " furlongs");
     }
 
-    public void checkWin() {
+    public void checkWin() { // check if user won or not and updates bank balance accordingly
         System.out.println((1) + ": " + results.get(0).getName() + "("+results.get(0).getNumber()+")");
-        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 1) {
+        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 1) { // check for win
             bankBalance += Math.round(betAmountInt * winVariable((results.get(0))));
+            realBalance += Math.round(betAmountInt * winVariable((results.get(0))));
 
             System.out.println("YOU WIN!");
             System.out.println("You now have $" + bankBalance);
@@ -235,9 +283,9 @@ public class Race {
                 Thread.currentThread().interrupt();
             }
 
-        } else {
+        } else if (betPlacingInt == 1) { // if false
             bankBalance -= betAmountInt;
-
+            realBalance -= betAmountInt;
             System.out.println("YOU LOSE!");
             System.out.println("You now have $" + bankBalance);
 
@@ -248,33 +296,52 @@ public class Race {
             }
 
         }
-        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 2) {
+        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 2) { // check for place
             bankBalance += Math.round(betAmountInt * placeVariable((results.get(0))));
+            realBalance += Math.round(betAmountInt * placeVariable((results.get(0))));
+
+            racesWon += 1;
 
             System.out.println("YOU WIN");
             System.out.println("You now have $" + bankBalance);
-        } else {
+        } else if (betPlacingInt == 2) { // if false
             bankBalance -= betAmountInt;
+            realBalance -= betAmountInt;
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
         }
-
-        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 3) {
+        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 3) { // check for show
             bankBalance += Math.round(betAmountInt * showVariable((results.get(0))));
+            realBalance += Math.round(betAmountInt * showVariable((results.get(0))));
+
+            racesWon += 1;
 
             System.out.println("YOU WIN");
             System.out.println("You now have $" + bankBalance);
-        } else {
+        } else if (betPlacingInt == 3) { // if false
             bankBalance -= betAmountInt;
+            realBalance -= betAmountInt;
+            
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
     
-    public void displayResults(){
+    public void displayResults(){ // results
         System.out.println("\n\nRace Results");
         System.out.println("------------");
         for(int i=0; i<results.size(); i++){
             System.out.println((i+1) + ": " + results.get(i).getName() + "("+results.get(i).getNumber()+")");
         }
     }
-
 
     public void startRace(){
         resetHorses();
@@ -308,7 +375,6 @@ public class Race {
         HorseRacingHelper.stopMusic();
     }
     // Other me`thods for simulating the race, calculating winners, etc., can be added as needed
-
     private int getIncrementForHorse(Horse horse) {
 
         int distanceFactor = (int)(7 - Math.abs(horse.getPreferredLength() - this.raceLength)); // get distance factor by minusing the diffrence of the horses preferred length and the actual racelength from 10
@@ -449,7 +515,7 @@ public class Race {
         return roundedDenom - 1 + "-" + roundedNum; // return the odds
     }
 
-    public double placeVariable(Horse horse) { // win probability (VISUAL)
+    public double placeVariable(Horse horse) { // win probability for betting
         double denom = 0;
         double num = getPureIncrement(horse) ;
 
@@ -511,7 +577,7 @@ public class Race {
         return roundedDenom - 3 + "-" + roundedNum; // return the odds
     }
 
-    public double showVariable(Horse horse) { // win probability (VISUAL)
+    public double showVariable(Horse horse) { // win probability for betting
         double denom = 0;
         double num = getPureIncrement(horse);
 
