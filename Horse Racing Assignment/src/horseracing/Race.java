@@ -14,7 +14,8 @@ public class Race {
     public static int accountsPayable = 0;
     public static int bankBalance = 1000;
     public static int realBalance = 1000;
-
+    public static int racesWon = 0;
+    public static int racesLost = 0;
     public static int betInt;
     public static int betAmountInt;
     public static int betPlacingInt;
@@ -157,7 +158,7 @@ public class Race {
     
     public void displayHorseTable(){
 
-        System.out.printf("|%-23s|%10s|%10s|%10s|%15s|%10s|%10s|%10s|\n", "Horse", "Dirt Stats", "Grass Stats", "Mud Stats", "Preferred Len", "Win Prob", "Place Prob", "Show Prob");
+        System.out.printf("|%-23s|%10s|%11s|%10s|%15s|%10s|%15s|%15s|\n", "Horse", "Dirt Stats", "Grass Stats", "Mud Stats", "Preferred Length", "Win Reward", "Place Reward", "Show Reward");
 
         for (int i = 0; i < horses.size(); i++) {   // iterates through the horses list
             Horse horse = horses.get(i);
@@ -170,14 +171,16 @@ public class Race {
             String s6 = "" + racingProbabilitiesWin(horse);
             String s7 = "" + racingProbabilitiesPlace(horse);
             String s8 = "" + racingProbabilitiesShow(horse);
+           // String s7 = "" + racingProbabilitiesPlace(horse);
+           // String s8 = "" + racingProbabilitiesShow(horse);
             
 
             
 
-            System.out.println("+-------------------------------------------------------------------------+");
-            System.out.printf("|%2s|%-20s|%10s|%11s|%10s|%15s|%10s|%10s|%10s|\n",iNum, s1, s2, s3, s4, s5, s6, s7, s8);
+            System.out.println("+--------------------------------------------------------------------------------------------------------------------+");
+            System.out.printf("|%2s|%-20s|%10s|%11s|%10s|%15s|%10s|%15s|%15s|\n",iNum, s1, s2, s3, s4, s5, s6, s7, s8);
         }
-        System.out.println("+-------------------------------------------------------------------------+");
+        System.out.println("+--------------------------------------------------------------------------------------------------------------------+");
     }
 
     public void bettingSystem() { // Betting system for the game
@@ -219,10 +222,48 @@ public class Race {
     public void checkWin() {
         System.out.println((1) + ": " + results.get(0).getName() + "("+results.get(0).getNumber()+")");
         if (betInt == (results.get(0).getNumber()) && betPlacingInt == 1) {
-            bankBalance += Math.round(betAmountInt*winVariable(results.get(0)));
+            bankBalance += Math.round(betAmountInt * winVariable((results.get(0))));
+
+            System.out.println("YOU WIN!");
+            System.out.println("You now have $" + bankBalance);
+
+            racesWon += 1;
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+
+        } else {
+            bankBalance -= betAmountInt;
+
+            System.out.println("YOU LOSE!");
+            System.out.println("You now have $" + bankBalance);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+
+        }
+        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 2) {
+            bankBalance += Math.round(betAmountInt * placeVariable((results.get(0))));
 
             System.out.println("YOU WIN");
             System.out.println("You now have $" + bankBalance);
+        } else {
+            bankBalance -= betAmountInt;
+        }
+
+        if (betInt == (results.get(0).getNumber()) && betPlacingInt == 3) {
+            bankBalance += Math.round(betAmountInt * showVariable((results.get(0))));
+
+            System.out.println("YOU WIN");
+            System.out.println("You now have $" + bankBalance);
+        } else {
+            bankBalance -= betAmountInt;
         }
     }
     
@@ -266,26 +307,44 @@ public class Race {
 
         HorseRacingHelper.stopMusic();
     }
-    // Other methods for simulating the race, calculating winners, etc., can be added as needed
+    // Other me`thods for simulating the race, calculating winners, etc., can be added as needed
 
     private int getIncrementForHorse(Horse horse) {
 
-        int distanceFactor = (int)(10 - Math.abs(horse.getPreferredLength() - this.raceLength)); // get distance factor by minusing the diffrence of the horses preferred length and the actual racelength from 10
-
-        System.out.print("ijnefrjnsjndf");
+        int distanceFactor = (int)(7 - Math.abs(horse.getPreferredLength() - this.raceLength)); // get distance factor by minusing the diffrence of the horses preferred length and the actual racelength from 10
 
         //if (raceSurface.equals("grass"))
         //    distanceFactor += horse.getGrassRating()
 
-        if (raceSurface.equals("Mud"))
-            distanceFactor += horse.getMudRating();
+        
         if (raceSurface.equals("Dirt"))
             distanceFactor += horse.getDirtRating();
         if (raceSurface.equals("Grass"))
             distanceFactor += horse.getGrassRating();
+        if (raceSurface.equals("Mud"))
+            distanceFactor += horse.getMudRating();
         // this.raceLength
         // this.raceSurface
-       return (int)(distanceFactor/ ((int) (Math.random() * 3) + 1));
+       return (int)(distanceFactor / ((int) (Math.random() * 3) + 1));
+    }
+
+    private int getPureIncrement(Horse horse) {
+
+        int distanceFactor = (int)(10 - Math.abs(horse.getPreferredLength() - this.raceLength)); // get distance factor by minusing the diffrence of the horses preferred length and the actual racelength from 10
+
+        //if (raceSurface.equals("grass"))
+        //    distanceFactor += horse.getGrassRating()
+
+        
+        if (raceSurface.equals("Dirt"))
+            distanceFactor += horse.getDirtRating();
+        if (raceSurface.equals("Grass"))
+            distanceFactor += horse.getGrassRating();
+        if (raceSurface.equals("Mud"))
+            distanceFactor += horse.getMudRating();
+        // this.raceLength
+        // this.raceSurface
+       return (int)(distanceFactor);
     }
 
 
@@ -298,130 +357,197 @@ public class Race {
     // Probabilities for horse racing
 
     public String racingProbabilitiesWin(Horse horse) { // win probability (VISUAL)
-        double prob1 = 0;
-        double prob2 = 0;
-        int denom = 1;
-        
-        prob1 = horse.getPreferredLength() + horse.getGrassRating();
+        double denom = 0;
+        double num = getPureIncrement(horse);
 
-        for (int i = 0; i < horses.size(); i++) { 
-            prob2 += horses.get(i).getPreferredLength() + horses.get(i).getGrassRating();
+        for (int i = 0; i < horses.size(); i++) {
+            denom += getPureIncrement(horses.get(i));
         }
 
-        double probable = prob2/prob1;
-        
-        double prob = probable%1;
+        double ratio = denom / num; // get initial ratio (pure)
+        int roundedRatio = (int) Math.round(ratio); // round ratio
+        int roundedDenom = (int) Math.round(denom / roundedRatio); // round denom
+        int roundedNum = (int) Math.round(num / roundedRatio); // round num
 
-        if (prob > 0.4 && prob < 0.6) {
-            denom = 2;
-            probable = probable * 2;
-        }  
+        while (roundedDenom > 9 && roundedNum > 1) { // reduce the fraction
+            roundedDenom /= 2;
+            roundedNum /= 2;
+        }
 
-        
-        int probable2 = (int) Math.round(probable);
+        int gcd = gcd(roundedDenom, roundedNum); // variable gcd for easy use
 
-
-        return probable2 + " - " + denom;
-    
+        roundedDenom /= gcd; // reduce
+        roundedNum /= gcd; // reduce
+        if (roundedDenom <= 4) {
+            roundedDenom = 5;
+        }
+        if (roundedNum < 1) {
+            roundedNum = 1;
+        }
+        return roundedDenom + "-" + roundedNum; // return the odds
     }
 
-    public double winVariable(Horse horse) { // win probability (VISUAL)
-        double prob1 = 0;
-        double prob2 = 0;
-        double denom = 1;
-        
-        prob1 = horse.getPreferredLength() + horse.getGrassRating();
+    public double winVariable(Horse horse) { // win probability for betting
+        double denom = 0;
+        double num = getPureIncrement(horse);
 
-        for (int i = 0; i < horses.size(); i++) { 
-            prob2 += horses.get(i).getPreferredLength() + horses.get(i).getGrassRating();
+        for (int i = 0; i < horses.size(); i++) {
+            denom += getPureIncrement(horses.get(i));
         }
 
-        double probable = prob2/prob1;
-        
-        double prob = probable%1;
+        double ratio = denom / num; // get initial ratio (pure)
+        int roundedRatio = (int) Math.round(ratio); // round ratio
+        int roundedDenom = (int) Math.round(denom / roundedRatio); // round denom
+        int roundedNum = (int) Math.round(num / roundedRatio); // round num
 
-        if (prob > 0.4 && prob < 0.6) {
-            denom = 2;
-            probable = probable * 2;
-        }  
+        while (roundedDenom > 9 && roundedNum > 1) { // reduce the fraction
+            roundedDenom /= 2;
+            roundedNum /= 2;
+        }
 
-        
-        double probable2 = (int) Math.round(probable);
+        int gcd = gcd(roundedDenom, roundedNum); // variable gcd for easy use
 
-
-        return (probable2 / denom);
-    
+        roundedDenom /= gcd; // reduce
+        roundedNum /= gcd; // reduce
+        if (roundedDenom <= 4) {
+            roundedDenom = 5;
+        }
+        if (roundedNum < 1) {
+            roundedNum = 1;
+        }
+        return (roundedDenom / roundedNum); // return the odds
     }
 
-    
+    public String racingProbabilitiesPlace(Horse horse) { // win probability (VISUAL)
+        double denom = 0;
+        double num = getPureIncrement(horse) ;
 
-
-
-    public String racingProbabilitiesPlace(Horse horse) { // top 2 probability (VISUAL)
-        double prob1 = 0;
-        double prob2 = 0;
-        int denom = 1;
-        
-        prob1 = (horse.getPreferredLength() + horse.getGrassRating()) ;
-
-        for (int i = 0; i < horses.size(); i++) { 
-            prob2 += (horses.get(i).getPreferredLength() + horses.get(i).getGrassRating());
+        for (int i = 0; i < horses.size(); i++) {
+            denom += getPureIncrement(horses.get(i));
         }
 
-        double probable = prob2/prob1;
-        
-        double prob = probable%1;
+        double ratio = denom / num; // get initial ratio (pure)
+        int roundedRatio = (int) Math.round(ratio); // round ratio
+        int roundedDenom = (int) Math.round(denom / roundedRatio); // round denom
+        int roundedNum = (int) Math.round(num / roundedRatio); // round num
 
-        if (prob > 0.4 && prob < 0.6) {
-            denom = 2;
-            probable = probable * 2;
+        while (roundedDenom > 9 && roundedNum > 1) { // reduce the fraction
+            roundedDenom /= 2;
+            roundedNum /= 2;
         }
 
-        int probable2 = (int) Math.round(probable * 0.8);
+        int gcd = gcd(roundedDenom, roundedNum); // variable gcd for easy use
 
-        if (probable2%denom == 0) {
-            probable2 -= 1;
+        roundedDenom /= gcd; // reduce
+        roundedNum /= gcd; // reduce
+        if (roundedDenom <= 4) {
+            roundedDenom = 5;
         }
-
-        if (probable2 <= denom) {
-            denom += 1;
-            probable = probable + 3;
+        if (roundedNum < 1) {
+            roundedNum = 1;
         }
-
-        return (int) probable2 + " - " + denom;
+        return roundedDenom - 1 + "-" + roundedNum; // return the odds
     }
 
-    public String racingProbabilitiesShow(Horse horse) { // top 3 probability (VISUAL)
-        double prob1 = 0;
-        double prob2 = 0;
-        int denom = 1;
-        
-        prob1 = (horse.getPreferredLength() + horse.getGrassRating()) ;
+    public double placeVariable(Horse horse) { // win probability (VISUAL)
+        double denom = 0;
+        double num = getPureIncrement(horse) ;
 
-        for (int i = 0; i < horses.size(); i++) { 
-            prob2 += (horses.get(i).getPreferredLength() + horses.get(i).getGrassRating());
+        for (int i = 0; i < horses.size(); i++) {
+            denom += getPureIncrement(horses.get(i));
         }
 
-        double probable = prob2/prob1;
-        
-        double prob = probable%1;
+        double ratio = denom / num; // get initial ratio (pure)
+        int roundedRatio = (int) Math.round(ratio); // round ratio
+        int roundedDenom = (int) Math.round(denom / roundedRatio); // round denom
+        int roundedNum = (int) Math.round(num / roundedRatio); // round num
 
-        if (prob > 0.4 && prob < 0.6) {
-            denom = 2;
-            probable = probable * 2;
+        while (roundedDenom > 9 && roundedNum > 1) { // reduce the fraction
+            roundedDenom /= 2;
+            roundedNum /= 2;
         }
 
-        int probable2 = (int) Math.round(probable * .6);
+        int gcd = gcd(roundedDenom, roundedNum); // variable gcd for easy use
 
-        if (probable2%denom == 0) {
-            probable2 -= 1;
+        roundedDenom /= gcd; // reduce
+        roundedNum /= gcd; // reduce
+        if (roundedDenom <= 4) {
+            roundedDenom = 5;
+        }
+        if (roundedNum < 1) {
+            roundedNum = 1;
+        }
+        return (roundedDenom - 1) / roundedNum; // return the odds
+    }
+
+    public String racingProbabilitiesShow(Horse horse) { // win probability (VISUAL)
+        double denom = 0;
+        double num = getPureIncrement(horse);
+
+        for (int i = 0; i < horses.size(); i++) {
+            denom += getPureIncrement(horses.get(i));
         }
 
-        if (probable2 == denom) {
-            denom += 2;
-            probable = probable + 3;
+        double ratio = denom / num; // get initial ratio (pure)
+        int roundedRatio = (int) Math.round(ratio); // round ratio
+        int roundedDenom = (int) Math.round(denom / roundedRatio); // round denom
+        int roundedNum = (int) Math.round(num / roundedRatio); // round num
+
+        while (roundedDenom > 9 && roundedNum > 1) { // reduce the fraction
+            roundedDenom /= 2;
+            roundedNum /= 2;
         }
 
-        return (int) probable2 + " - " + denom;
+        int gcd = gcd(roundedDenom, roundedNum); // variable gcd for easy use
+
+        roundedDenom /= gcd; // reduce
+        roundedNum /= gcd; // reduce
+        if (roundedDenom <= 4) {
+            roundedDenom = 5;
+        }
+        if (roundedNum < 1) {
+            roundedNum = 1;
+        }
+        return roundedDenom - 3 + "-" + roundedNum; // return the odds
+    }
+
+    public double showVariable(Horse horse) { // win probability (VISUAL)
+        double denom = 0;
+        double num = getPureIncrement(horse);
+
+        for (int i = 0; i < horses.size(); i++) {
+            denom += getPureIncrement(horses.get(i));
+        }
+
+        double ratio = denom / num; // get initial ratio (pure)
+        int roundedRatio = (int) Math.round(ratio); // round ratio
+        int roundedDenom = (int) Math.round(denom / roundedRatio); // round denom
+        int roundedNum = (int) Math.round(num / roundedRatio); // round num
+
+        while (roundedDenom > 9 && roundedNum > 1) { // reduce the fraction
+            roundedDenom /= 2;
+            roundedNum /= 2;
+        }
+
+        int gcd = gcd(roundedDenom, roundedNum); // variable gcd for easy use
+
+        roundedDenom /= gcd; // reduce
+        roundedNum /= gcd; // reduce
+        if (roundedDenom <= 4) {
+            roundedDenom = 5;
+        }
+        if (roundedNum < 1) {
+            roundedNum = 1;
+        }
+        return (roundedDenom - 3) / roundedNum; // return the odds
+    }
+
+
+    public int gcd(int a, int b) { // gcd for easy use
+        if (b == 0) {
+            return a;
+        } else {
+            return gcd(b, a % b);
+        }
     }
 }

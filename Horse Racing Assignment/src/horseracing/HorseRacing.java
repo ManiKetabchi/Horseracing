@@ -6,13 +6,13 @@ public class HorseRacing {
 
      public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        int currentMenu = 2;    
+        int currentMenu = 0;    
         HorseRacingHelper.prepareHorseRacingSimulation();
         boolean gameOver = false;
         while(!gameOver){
             HorseRacingHelper.clearConsole();
 
-            int numHorsesInRace = 3;//(int) (Math.random() * 5) + 5;
+            int numHorsesInRace = (int) (Math.random() * 3) + 7;
 
             Race race = HorseRacingHelper.createRace(numHorsesInRace, (int) (Math.random() * 3) + 1, (int) (Math.random() * 3) + 1);
             
@@ -25,6 +25,10 @@ public class HorseRacing {
                     currentMenu = 1;
                 } else if (mainMenuVar == 2) {
                     currentMenu = 2;
+                } else if (mainMenuVar == 3) {
+                    currentMenu = 3;
+                } else if (mainMenuVar == 4) {
+                    currentMenu = 9999;
                 } else {
                     currentMenu = 0;
                 }
@@ -75,10 +79,18 @@ public class HorseRacing {
                     }
             }
 
-            
-
-            //System.out.println("Race is Over");
-            //gameOver = playAgain(in);
+            while (currentMenu == 9999) {
+                System.out.println("Thanks for playing");
+                System.out.println();
+                System.out.println("You won " + race.racesWon + " races!");
+                
+                try { // wait for 2s
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                System.exit(0); // exit
+            }
 
 
         }
